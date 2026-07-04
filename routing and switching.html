@@ -1,0 +1,2742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Switching & Routing - Quiz & Study Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-card-hover: #22222e;
+            --bg-elevated: #252532;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --text-muted: #6b6b80;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-dark: #4f46e5;
+            --accent-glow: rgba(99, 102, 241, 0.3);
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.15);
+            --error: #ef4444;
+            --error-bg: rgba(239, 68, 68, 0.15);
+            --warning: #f59e0b;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --glass-bg: rgba(26, 26, 36, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --gradient-2: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+            --gradient-card: linear-gradient(145deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8f9fc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --bg-elevated: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent: #4f46e5;
+            --accent-light: #6366f1;
+            --accent-dark: #3730a3;
+            --accent-glow: rgba(79, 70, 229, 0.2);
+            --success: #16a34a;
+            --success-bg: rgba(22, 163, 74, 0.12);
+            --error: #dc2626;
+            --error-bg: rgba(220, 38, 38, 0.12);
+            --warning: #d97706;
+            --border: rgba(0, 0, 0, 0.08);
+            --border-hover: rgba(0, 0, 0, 0.15);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --gradient-card: linear-gradient(145deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Geist', 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: background 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.15; }
+            25% { transform: translateY(-30px) translateX(20px); opacity: 0.3; }
+            50% { transform: translateY(-60px) translateX(-20px); opacity: 0.1; }
+            75% { transform: translateY(-30px) translateX(40px); opacity: 0.25; }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.4s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+            -webkit-text-fill-color: var(--accent);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .theme-toggle {
+            width: 48px;
+            height: 28px;
+            border-radius: 14px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-light);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .theme-toggle-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: white;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+        }
+
+        [data-theme="light"] .theme-toggle-thumb {
+            transform: translateX(20px);
+        }
+
+        .mode-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .mode-indicator i {
+            color: var(--accent-light);
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 64px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 64px;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease, background 0.4s ease;
+            padding: 20px 0;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-hover);
+            border-radius: 2px;
+        }
+
+        .sidebar-section {
+            padding: 0 16px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            padding: 12px 12px 8px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+        }
+
+        .nav-item.active {
+            background: var(--gradient-card);
+            color: var(--accent-light);
+            border-color: rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .nav-item .badge {
+            margin-left: auto;
+            background: var(--bg-elevated);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .nav-item.active .badge {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 32px;
+            position: relative;
+            z-index: 1;
+            min-height: calc(100vh - 64px);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 30px;
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.6s ease 0.1s both;
+        }
+
+        .hero h1 .gradient-text {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.7;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 32px;
+            animation: fadeInUp 0.6s ease 0.3s both;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mode Cards */
+        .mode-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto 60px;
+            animation: fadeInUp 0.6s ease 0.4s both;
+        }
+
+        .mode-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .mode-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .mode-card .icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 1.8rem;
+            color: var(--accent-light);
+            transition: all 0.3s ease;
+        }
+
+        .mode-card:hover .icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .mode-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .mode-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .mode-card .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 12px;
+            background: var(--gradient-1);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .mode-card .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header h2 i {
+            color: var(--accent-light);
+            font-size: 1.3rem;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-secondary {
+            padding: 8px 18px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quiz-progress {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 56px;
+            height: 56px;
+        }
+
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: var(--bg-elevated);
+            stroke-width: 4;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke: url(#progressGradient);
+            stroke-width: 4;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-light);
+        }
+
+        .progress-details h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .progress-details p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .progress-score {
+            text-align: right;
+        }
+
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent-light);
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .question-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .question-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.6;
+            color: var(--text-primary);
+            padding-top: 8px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 14px;
+            border: 2px solid var(--border);
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option:hover {
+            border-color: var(--accent-light);
+            background: var(--bg-card-hover);
+        }
+
+        .option.selected {
+            border-color: var(--accent);
+            background: var(--gradient-card);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: var(--success-bg);
+        }
+
+        .option.incorrect {
+            border-color: var(--error);
+            background: var(--error-bg);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .option.selected .option-letter {
+            background: var(--accent);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--error);
+            color: white;
+        }
+
+        .option-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 0.2s ease;
+        }
+
+        .option.selected .option-text,
+        .option.correct .option-text,
+        .option.incorrect .option-text {
+            color: var(--text-primary);
+        }
+
+        .option-check {
+            margin-left: auto;
+            font-size: 1.1rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .option.correct .option-check,
+        .option.incorrect .option-check {
+            opacity: 1;
+        }
+
+        .option.correct .option-check {
+            color: var(--success);
+        }
+
+        .option.incorrect .option-check {
+            color: var(--error);
+        }
+
+        /* Explanation */
+        .explanation {
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-top: 16px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .explanation-header.correct { color: var(--success); }
+        .explanation-header.incorrect { color: var(--error); }
+
+        .explanation-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .answer-key {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: var(--success-bg);
+            color: var(--success);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        /* Quiz Controls */
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-primary {
+            padding: 14px 32px;
+            border-radius: 14px;
+            background: var(--gradient-1);
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-outline {
+            padding: 14px 28px;
+            border-radius: 14px;
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent-light);
+            color: var(--accent-light);
+            background: var(--gradient-card);
+        }
+
+        /* Results Screen */
+        .results-screen {
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .results-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 30px;
+            background: var(--gradient-card);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            font-size: 3rem;
+            box-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .results-screen h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .results-screen .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto 40px;
+        }
+
+        .result-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .result-stat:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .result-stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .result-stat.correct .result-stat-value { color: var(--success); }
+        .result-stat.incorrect .result-stat-value { color: var(--error); }
+        .result-stat.total .result-stat-value { color: var(--accent-light); }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .results-message {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            padding: 20px;
+            border-radius: 14px;
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Study Mode */
+        .study-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .study-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .study-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-1);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .study-card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .study-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .study-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .study-card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .study-card-title i {
+            color: var(--accent-light);
+            font-size: 1rem;
+        }
+
+        .study-card-count {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--bg-elevated);
+            color: var(--text-muted);
+        }
+
+        .study-card-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .study-card-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .topic-tag {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--bg-elevated);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Module Detail View */
+        .module-detail {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .module-detail-header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .module-detail-header h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .module-detail-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .mcq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mcq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .mcq-item:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow);
+        }
+
+        .mcq-question {
+            padding: 20px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .mcq-question:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .mcq-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .mcq-text {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.5;
+            padding-top: 4px;
+            flex: 1;
+        }
+
+        .mcq-toggle {
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+            padding-top: 4px;
+        }
+
+        .mcq-item.expanded .mcq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .mcq-answer-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        .mcq-item.expanded .mcq-answer-panel {
+            max-height: 500px;
+            padding: 20px 24px 20px 70px;
+        }
+
+        .mcq-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .mcq-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .mcq-option.correct {
+            border-color: var(--success);
+            background: var(--success-bg);
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .mcq-option-letter {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .mcq-option.correct .mcq-option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .mcq-answer-key {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: var(--success-bg);
+            color: var(--success);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        /* Page transitions */
+        .page {
+            display: none;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .mobile-menu-toggle {
+                display: flex;
+            }
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 64px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 99;
+            }
+            .overlay.show {
+                display: block;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-stats { gap: 20px; }
+            .mode-cards { grid-template-columns: 1fr; }
+            .study-grid { grid-template-columns: 1fr; }
+            .results-stats { grid-template-columns: 1fr; }
+            .content { padding: 20px 16px; }
+            .quiz-controls { flex-direction: column; gap: 12px; }
+            .quiz-controls .btn-primary, .quiz-controls .btn-outline { width: 100%; justify-content: center; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* Selection */
+        ::selection {
+            background: var(--accent);
+            color: white;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <!-- Background Particles -->
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- SVG Gradients -->
+    <svg width="0" height="0" style="position:absolute">
+        <defs>
+            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#6366f1"/>
+                <stop offset="100%" style="stop-color:#a855f7"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-network-wired"></i>
+            <span>Switching & Routing</span>
+        </div>
+        <div class="header-actions">
+            <div class="mode-indicator" id="modeIndicator">
+                <i class="fas fa-book-open"></i>
+                <span>Study Mode</span>
+            </div>
+            <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+                <div class="theme-toggle-thumb">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </div>
+            </div>
+            <div class="mobile-menu-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Navigation</div>
+                <div class="nav-item active" onclick="showPage('home')" data-page="home">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </div>
+                <div class="nav-item" onclick="showPage('study')" data-page="study">
+                    <i class="fas fa-book-open"></i>
+                    <span>Study Mode</span>
+                </div>
+                <div class="nav-item" onclick="showPage('quiz')" data-page="quiz">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Quiz Mode</span>
+                    <span class="badge" id="quizBadge">0/5</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Modules</div>
+                <div class="nav-item" onclick="showModule(1)" data-module="1">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Module I</span>
+                    <span class="badge">32</span>
+                </div>
+                <div class="nav-item" onclick="showModule(2)" data-module="2">
+                    <i class="fas fa-route"></i>
+                    <span>Module II</span>
+                    <span class="badge">31</span>
+                </div>
+                <div class="nav-item" onclick="showModule(3)" data-module="3">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Module III</span>
+                    <span class="badge">22</span>
+                </div>
+                <div class="nav-item" onclick="showModule(4)" data-module="4">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Module IV</span>
+                    <span class="badge">25</span>
+                </div>
+                <div class="nav-item" onclick="showModule(5)" data-module="5">
+                    <i class="fas fa-globe"></i>
+                    <span>Module V</span>
+                    <span class="badge">15</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content -->
+        <main class="content" id="content">
+            <!-- HOME PAGE -->
+            <div class="page active" id="page-home">
+                <div class="hero">
+                    <div class="hero-badge">
+                        <i class="fas fa-graduation-cap"></i>
+                        B.Sc.(H) ANCS - Semester III
+                    </div>
+                    <h1>Master <span class="gradient-text">Switching & Routing</span></h1>
+                    <p>Interactive quiz and study platform for BNC37103. Practice with module-wise MCQs, track your progress, and ace your exams.</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">125</div>
+                            <div class="stat-label">Total MCQs</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Modules</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Modes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mode-cards">
+                    <div class="mode-card" onclick="showPage('study')">
+                        <div class="icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h3>Study Mode</h3>
+                        <p>Browse all MCQs module-wise with answer keys visible. Perfect for learning and revision before attempting quizzes.</p>
+                        <button class="btn">
+                            <i class="fas fa-book-open"></i>
+                            Start Studying
+                        </button>
+                    </div>
+                    <div class="mode-card" onclick="startQuiz()">
+                        <div class="icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3>Quiz Mode</h3>
+                        <p>Test your knowledge with timed quizzes. Get instant feedback, explanations, and track your score across modules.</p>
+                        <button class="btn">
+                            <i class="fas fa-play"></i>
+                            Start Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STUDY MODE PAGE -->
+            <div class="page" id="page-study">
+                <div class="section-header">
+                    <h2><i class="fas fa-book-open"></i> Study Mode</h2>
+                    <div class="section-actions">
+                        <button class="btn-secondary" onclick="showPage('home')">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+                <div class="study-grid" id="studyGrid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- MODULE DETAIL PAGE -->
+            <div class="page" id="page-module">
+                <div class="section-header">
+                    <h2 id="moduleTitle"><i class="fas fa-layer-group"></i> Module</h2>
+                    <div class="section-actions">
+                        <button class="btn-secondary" onclick="showPage('study')">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <button class="btn-secondary active" onclick="startModuleQuiz()">
+                            <i class="fas fa-play"></i> Quiz This Module
+                        </button>
+                    </div>
+                </div>
+                <div class="module-detail">
+                    <div class="module-detail-header">
+                        <h2 id="moduleDetailTitle">Module Title</h2>
+                        <p id="moduleDetailDesc">Module description</p>
+                    </div>
+                    <div class="mcq-list" id="mcqList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUIZ MODE PAGE -->
+            <div class="page" id="page-quiz">
+                <div class="section-header">
+                    <h2><i class="fas fa-question-circle"></i> Quiz Mode</h2>
+                    <div class="section-actions">
+                        <button class="btn-secondary" onclick="showPage('home')">
+                            <i class="fas fa-times"></i> Exit
+                        </button>
+                    </div>
+                </div>
+                <div class="quiz-container" id="quizContainer">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- RESULTS PAGE -->
+            <div class="page" id="page-results">
+                <div class="results-screen" id="resultsScreen">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+
+        // ========== QUIZ DATA ==========
+        const quizData = {
+            modules: [
+                {
+                    id: 1,
+                    title: "Module I: Network Models, IP Addressing & Routing Basics",
+                    shortTitle: "Network Models & IP Addressing",
+                    icon: "fas fa-layer-group",
+                    description: "OSI Model, TCP/IP Model, Data Encapsulation, IP Addressing, Routing Basics, Cisco IOS",
+                    topics: ["OSI 7 Layers", "TCP/IP Model", "Encapsulation", "IPv4/IPv6", "Static/Dynamic Routing", "Cisco IOS"],
+                    questions: [
+                        {
+                            q: "Which layer of the OSI model is responsible for data encryption and decryption?",
+                            options: ["Physical", "Data Link", "Network", "Presentation"],
+                            answer: 3,
+                            explanation: "The Presentation Layer (Layer 6) handles data translation, encryption, decryption, and compression."
+                        },
+                        {
+                            q: "At which layer of the OSI model does routing occur?",
+                            options: ["Physical", "Data Link", "Network", "Transport"],
+                            answer: 2,
+                            explanation: "Routing occurs at the Network Layer (Layer 3), which decides the physical path data will take."
+                        },
+                        {
+                            q: "Which of the following is NOT a function of the Data Link layer in the OSI model?",
+                            options: ["Error detection and correction", "Frame sequencing", "Path determination", "Media access control"],
+                            answer: 2,
+                            explanation: "Path determination is a function of the Network Layer, not the Data Link Layer."
+                        },
+                        {
+                            q: "What is the primary purpose of the Transport layer in the OSI model?",
+                            options: ["Addressing", "Data encapsulation", "Reliable data transfer", "Data representation"],
+                            answer: 2,
+                            explanation: "The Transport Layer ensures end-to-end communication and reliable data transfer using TCP and UDP."
+                        },
+                        {
+                            q: "Which protocol operates at the Network layer of the OSI model?",
+                            options: ["TCP", "IP", "FTP", "Ethernet"],
+                            answer: 1,
+                            explanation: "IP (Internet Protocol) operates at the Network Layer (Layer 3)."
+                        },
+                        {
+                            q: "What is the default subnet mask for a Class B IP address?",
+                            options: ["255.0.0.0", "255.255.0.0", "255.255.255.0", "255.255.255.255"],
+                            answer: 1,
+                            explanation: "Class B addresses have a default subnet mask of 255.255.0.0 (/16)."
+                        },
+                        {
+                            q: "Which of the following IP addresses is a loopback address?",
+                            options: ["10.0.0.1", "169.254.0.1", "127.0.0.1", "192.168.0.1"],
+                            answer: 2,
+                            explanation: "127.0.0.1 is the standard loopback address used for testing local network interfaces."
+                        },
+                        {
+                            q: "What is the purpose of a subnet mask in IP addressing?",
+                            options: ["To identify the network portion of an IP address", "To identify the host portion of an IP address", "To identify the default gateway", "To identify the broadcast address"],
+                            answer: 0,
+                            explanation: "A subnet mask identifies the network portion of an IP address by separating network bits from host bits."
+                        },
+                        {
+                            q: "Which of the following is a private IP address range?",
+                            options: ["172.32.0.0-172.33.255.255", "192.168.0.0-192.168.255.255", "200.0.0.0-200.0.0.255", "224.0.0.0-224.0.0.255"],
+                            answer: 1,
+                            explanation: "192.168.0.0/16 is one of the RFC 1918 private IP address ranges."
+                        },
+                        {
+                            q: "What does CIDR stand for?",
+                            options: ["Classless Internet Domain Routing", "Classful Inter-Domain Routing", "Classless Inter-Domain Routing", "Classful Internet Domain Routing"],
+                            answer: 2,
+                            explanation: "CIDR stands for Classless Inter-Domain Routing, which allows flexible IP address allocation."
+                        },
+                        {
+                            q: "What is the primary function of a router?",
+                            options: ["Connect multiple devices within the same network", "Forward data packets between different networks", "Provide IP addresses to devices", "Translate domain names into IP addresses"],
+                            answer: 1,
+                            explanation: "A router's primary function is to forward data packets between different networks based on IP addresses."
+                        },
+                        {
+                            q: "Which of the following routing protocols is a distance vector protocol?",
+                            options: ["OSPF", "EIGRP", "RIP", "BGP"],
+                            answer: 2,
+                            explanation: "RIP (Routing Information Protocol) is a distance vector protocol that uses hop count as its metric."
+                        },
+                        {
+                            q: "What does the acronym BGP stand for?",
+                            options: ["Border Gateway Protocol", "Basic Gateway Protocol", "Border Group Protocol", "Backbone Gateway Protocol"],
+                            answer: 0,
+                            explanation: "BGP stands for Border Gateway Protocol, the core routing protocol of the Internet."
+                        },
+                        {
+                            q: "Which metric does OSPF use to determine the best path to a destination?",
+                            options: ["Hop count", "Bandwidth", "Delay", "Cost"],
+                            answer: 3,
+                            explanation: "OSPF uses Cost as its metric, calculated based on bandwidth (Cost = 10^8 / Bandwidth)."
+                        },
+                        {
+                            q: "Which type of routing protocol is OSPF?",
+                            options: ["Distance vector", "Link state", "Path vector", "Static"],
+                            answer: 1,
+                            explanation: "OSPF is a link-state routing protocol that builds a complete topology map of the network."
+                        },
+                        {
+                            q: "In EIGRP, what is the feasible successor?",
+                            options: ["The best path to a destination", "A backup path to a destination", "The path with the highest bandwidth", "The path with the lowest delay"],
+                            answer: 1,
+                            explanation: "A feasible successor in EIGRP is a backup path that meets the feasibility condition and can be used immediately if the successor fails."
+                        },
+                        {
+                            q: "Which command would you use to view the routing table on a Cisco router?",
+                            options: ["show ip route", "show ip interface", "show version", "show interfaces"],
+                            answer: 0,
+                            explanation: "The 'show ip route' command displays the routing table on a Cisco router."
+                        },
+                        {
+                            q: "What is a characteristic of dynamic routing?",
+                            options: ["Requires manual configuration", "Automatically adapts to network changes", "Uses a fixed path for data packets", "Suitable for small networks only"],
+                            answer: 1,
+                            explanation: "Dynamic routing automatically adapts to network changes by updating routing tables through routing protocols."
+                        },
+                        {
+                            q: "Which of the following is a link-state routing protocol?",
+                            options: ["RIP", "OSPF", "EIGRP", "BGP"],
+                            answer: 1,
+                            explanation: "OSPF is a link-state routing protocol. RIP is distance-vector, EIGRP is hybrid, and BGP is path-vector."
+                        },
+                        {
+                            q: "What is the main advantage of using a hierarchical network design in OSPF?",
+                            options: ["Simplifies IP address management", "Reduces the size of routing tables", "Increases network latency", "Eliminates the need for routers"],
+                            answer: 1,
+                            explanation: "Hierarchical design in OSPF using areas reduces the size of routing tables and limits LSA flooding."
+                        },
+                        {
+                            q: "What is the purpose of the OSI model in networking?",
+                            options: ["To define the architecture for network protocols", "To establish a framework for software development", "To specify the physical network infrastructure", "To manage network security"],
+                            answer: 0,
+                            explanation: "The OSI model provides a conceptual framework for understanding and designing network protocols."
+                        },
+                        {
+                            q: "Which layer of the OSI model is responsible for end-to-end communication and provides services like encryption and decryption?",
+                            options: ["Transport Layer", "Presentation Layer", "Application Layer", "Session Layer"],
+                            answer: 1,
+                            explanation: "The Presentation Layer (Layer 6) handles encryption, decryption, and data format translation."
+                        },
+                        {
+                            q: "What is the primary function of the Network Layer in the OSI model?",
+                            options: ["Error detection and correction", "Data link control", "Routing and addressing", "Session establishment and termination"],
+                            answer: 2,
+                            explanation: "The Network Layer handles logical addressing (IP) and routing of packets between networks."
+                        },
+                        {
+                            q: "Which addressing scheme is used by IPv6?",
+                            options: ["32-bit", "128-bit", "64-bit", "16-bit"],
+                            answer: 1,
+                            explanation: "IPv6 uses 128-bit addresses, providing a vastly larger address space than IPv4's 32-bit addresses."
+                        },
+                        {
+                            q: "What is the purpose of ARP (Address Resolution Protocol)?",
+                            options: ["To map IP addresses to MAC addresses", "To discover the default gateway", "To resolve domain names to IP addresses", "To establish a secure connection"],
+                            answer: 0,
+                            explanation: "ARP maps IP addresses to MAC addresses on a local network segment."
+                        },
+                        {
+                            q: "In networking, what is the function of a router?",
+                            options: ["Connects devices within the same network", "Filters and forwards packets between different networks", "Manages network security", "Assigns IP addresses dynamically"],
+                            answer: 1,
+                            explanation: "Routers filter and forward packets between different networks based on IP addresses."
+                        },
+                        {
+                            q: "Which protocol is used for secure communication over a computer network?",
+                            options: ["HTTP", "FTP", "SSH", "SNMP"],
+                            answer: 2,
+                            explanation: "SSH (Secure Shell) provides encrypted secure communication over a network, unlike HTTP or FTP which are unencrypted."
+                        },
+                        {
+                            q: "What is the primary purpose of DNS (Domain Name System)?",
+                            options: ["Assigning IP addresses to devices", "Resolving domain names to IP addresses", "Encrypting network communication", "Managing network resources"],
+                            answer: 1,
+                            explanation: "DNS translates human-readable domain names (like google.com) into IP addresses."
+                        },
+                        {
+                            q: "Which subnet mask is associated with the Class B IP address range?",
+                            options: ["255.0.0.0", "255.255.0.0", "255.255.255.0", "255.255.255.255"],
+                            answer: 1,
+                            explanation: "Class B addresses use the subnet mask 255.255.0.0, with the first 16 bits for the network portion."
+                        },
+                        {
+                            q: "What is the purpose of ICMP (Internet Control Message Protocol)?",
+                            options: ["To encapsulate data for transmission", "To manage network traffic congestion", "To diagnose network-related issues", "To establish a secure connection"],
+                            answer: 2,
+                            explanation: "ICMP is used for network diagnostics, such as ping and traceroute, to test connectivity and report errors."
+                        },
+                        {
+                            q: "What does NAT (Network Address Translation) do in networking?",
+                            options: ["Assigns unique IP addresses to devices", "Maps private IP addresses to a public IP address", "Encrypts network traffic", "Manages network security policies"],
+                            answer: 1,
+                            explanation: "NAT maps multiple private IP addresses to a single public IP address, conserving public IP space."
+                        },
+                        {
+                            q: "Which of the following is a layer-2 device in a network?",
+                            options: ["Router", "Switch", "Hub", "Firewall"],
+                            answer: 1,
+                            explanation: "A switch operates at Layer 2 (Data Link Layer) using MAC addresses to forward frames."
+                        }
+                    ]
+                },
+
+                {
+                    id: 2,
+                    title: "Module II: Dynamic Routing",
+                    shortTitle: "Dynamic Routing",
+                    icon: "fas fa-route",
+                    description: "RIP, EIGRP, OSPF, Distance Vector vs Link State, Routing Loops, Convergence",
+                    topics: ["RIP", "EIGRP", "OSPF", "DUAL Algorithm", "LSA Types", "DR/BDR"],
+                    questions: [
+                        {
+                            q: "RIP uses which type of metric for route determination?",
+                            options: ["Bandwidth", "Delay", "Hop count", "MTU"],
+                            answer: 2,
+                            explanation: "RIP uses hop count as its metric, with a maximum of 15 hops."
+                        },
+                        {
+                            q: "What is the maximum hop count for RIP?",
+                            options: ["15", "16", "31", "32"],
+                            answer: 0,
+                            explanation: "RIP has a maximum hop count of 15. A hop count of 16 indicates an unreachable network."
+                        },
+                        {
+                            q: "RIP operates at which layer of the OSI model?",
+                            options: ["Network", "Data Link", "Transport", "Application"],
+                            answer: 0,
+                            explanation: "RIP operates at the Network Layer (Layer 3) as a routing protocol."
+                        },
+                        {
+                            q: "Which port number does RIP use for its operations?",
+                            options: ["80", "110", "520", "8080"],
+                            answer: 2,
+                            explanation: "RIP uses UDP port 520 for routing updates."
+                        },
+                        {
+                            q: "How often does RIP send out routing updates by default?",
+                            options: ["Every 15 seconds", "Every 30 seconds", "Every 60 seconds", "Every 90 seconds"],
+                            answer: 1,
+                            explanation: "RIP sends periodic routing updates every 30 seconds by default."
+                        },
+                        {
+                            q: "EIGRP is a hybrid routing protocol that uses characteristics of which two types of routing protocols?",
+                            options: ["Distance-vector and link-state", "Distance-vector and path-vector", "Link-state and path-vector", "None of the above"],
+                            answer: 0,
+                            explanation: "EIGRP combines features of distance-vector and link-state protocols, making it a hybrid protocol."
+                        },
+                        {
+                            q: "What algorithm does EIGRP use for finding the shortest path?",
+                            options: ["Bellman-Ford", "Dijkstra", "DUAL (Diffusing Update Algorithm)", "A* algorithm"],
+                            answer: 2,
+                            explanation: "EIGRP uses DUAL (Diffusing Update Algorithm) to ensure loop-free paths and fast convergence."
+                        },
+                        {
+                            q: "Which multicast address does EIGRP use to send updates?",
+                            options: ["224.0.0.9", "224.0.0.5", "224.0.0.10", "224.0.0.6"],
+                            answer: 2,
+                            explanation: "EIGRP uses multicast address 224.0.0.10 for updates. 224.0.0.5/6 are used by OSPF."
+                        },
+                        {
+                            q: "EIGRP maintains a copy of its neighbour's routing tables. What is this table called?",
+                            options: ["Routing table", "Topology table", "Neighbor table", "Link-state table"],
+                            answer: 1,
+                            explanation: "EIGRP maintains a Topology Table containing all routes learned from neighbors, including feasible successors."
+                        },
+                        {
+                            q: "By default, EIGRP uses which metrics to calculate its metric?",
+                            options: ["Bandwidth and delay", "Bandwidth and hop count", "Bandwidth, delay, load, and reliability", "Bandwidth, delay, and MTU"],
+                            answer: 0,
+                            explanation: "By default, EIGRP uses bandwidth and delay as its composite metric components."
+                        },
+                        {
+                            q: "OSPF is classified as which type of routing protocol?",
+                            options: ["Distance-vector", "Link-state", "Path-vector", "Hybrid"],
+                            answer: 1,
+                            explanation: "OSPF is a link-state routing protocol that builds a complete topology map using LSAs."
+                        },
+                        {
+                            q: "OSPF uses which algorithm to determine the shortest path?",
+                            options: ["Bellman-Ford", "Dijkstra", "DUAL", "A* algorithm"],
+                            answer: 1,
+                            explanation: "OSPF uses Dijkstra's Shortest Path First (SPF) algorithm to calculate the best path."
+                        },
+                        {
+                            q: "What is the multicast address used by OSPF to send hello packets to all OSPF routers?",
+                            options: ["224.0.0.9", "224.0.0.5", "224.0.0.10", "224.0.0.6"],
+                            answer: 1,
+                            explanation: "OSPF uses 224.0.0.5 (AllSPFRouters) for hello packets. 224.0.0.6 is for AllDRouters."
+                        },
+                        {
+                            q: "In OSPF, what is the router ID?",
+                            options: ["An IP address assigned to each OSPF router", "A unique identifier for each OSPF router, often the highest IP address on an active interface", "The IP address of the router's interface connected to the backbone", "The MAC address of the router"],
+                            answer: 1,
+                            explanation: "The Router ID is a unique 32-bit identifier, typically the highest active IP address or highest loopback address."
+                        },
+                        {
+                            q: "What is the main purpose of OSPF areas?",
+                            options: ["To simplify administration", "To reduce the size of the routing table", "To optimize the network and reduce the amount of routing information that must be processed", "To provide security for routing updates"],
+                            answer: 2,
+                            explanation: "OSPF areas optimize the network by reducing routing information processing and limiting LSA flooding scope."
+                        },
+                        {
+                            q: "What is the primary advantage of dynamic routing over static routing?",
+                            options: ["It is easier to configure", "It adapts automatically to changes in the network", "It requires less memory", "It is more secure"],
+                            answer: 1,
+                            explanation: "Dynamic routing automatically adapts to network topology changes without manual intervention."
+                        },
+                        {
+                            q: "Which of the following is NOT a dynamic routing protocol?",
+                            options: ["RIP", "OSPF", "BGP", "ARP"],
+                            answer: 3,
+                            explanation: "ARP (Address Resolution Protocol) is not a routing protocol; it maps IP addresses to MAC addresses."
+                        },
+                        {
+                            q: "Which dynamic routing protocol is typically used for routing within an autonomous system (AS)?",
+                            options: ["BGP", "EIGRP", "OSPF", "Both b and c"],
+                            answer: 3,
+                            explanation: "Both EIGRP and OSPF are Interior Gateway Protocols (IGPs) used within an autonomous system."
+                        },
+                        {
+                            q: "Which of the following routing protocols use the concept of areas to segment a large network?",
+                            options: ["RIP", "EIGRP", "OSPF", "BGP"],
+                            answer: 2,
+                            explanation: "OSPF uses areas to create a hierarchical network design. RIP and EIGRP do not use areas."
+                        },
+                        {
+                            q: "Which is a key characteristic of link-state routing protocols?",
+                            options: ["They send their entire routing table to all neighboring routers", "They send updates only when there is a change in the network topology", "They use a hop count as their metric", "They do not require a hierarchical network"],
+                            answer: 1,
+                            explanation: "Link-state protocols send triggered updates only when topology changes occur, unlike distance-vector protocols that send periodic full updates."
+                        },
+                        {
+                            q: "In OSPF, what is the function of the Designated Router (DR)?",
+                            options: ["To reduce the number of adjacencies formed and the amount of routing information exchanged", "To broadcast routing updates to all routers in the network", "To act as the central router in a star topology", "To handle all routing decisions within an area"],
+                            answer: 0,
+                            explanation: "The DR reduces adjacency overhead in multi-access networks by acting as a central point for LSA distribution."
+                        },
+                        {
+                            q: "EIGRP uses which protocol to provide reliable delivery of packets?",
+                            options: ["TCP", "UDP", "RTP (Reliable Transport Protocol)", "ICMP"],
+                            answer: 2,
+                            explanation: "EIGRP uses its own RTP (Reliable Transport Protocol) for guaranteed delivery of routing updates."
+                        },
+                        {
+                            q: "What is the main purpose of using a wildcard mask in OSPF?",
+                            options: ["To specify the range of IP addresses for network statements", "To identify the subnet mask used by the network", "To filter routing updates", "To secure routing"],
+                            answer: 0,
+                            explanation: "Wildcard masks in OSPF network statements specify which interfaces participate in OSPF."
+                        },
+                        {
+                            q: "Which of the following is NOT a characteristic of RIP?",
+                            options: ["Uses hop count as the metric", "Supports VLSM (Variable Length Subnet Mask)", "Sends the entire routing table in updates", "Maximum hop count of 15"],
+                            answer: 1,
+                            explanation: "RIP v1 does not support VLSM. RIP v2 added VLSM support but RIP v1 is classful."
+                        },
+                        {
+                            q: "Which OSPF network type elects a DR and BDR?",
+                            options: ["Point-to-point", "Broadcast multi-access", "Non-broadcast multi-access", "Point-to-multipoint"],
+                            answer: 1,
+                            explanation: "Broadcast multi-access networks (like Ethernet) elect a DR and BDR to optimize adjacency formation."
+                        },
+                        {
+                            q: "What is the administrative distance of EIGRP for internal routes?",
+                            options: ["90", "110", "120", "170"],
+                            answer: 0,
+                            explanation: "EIGRP internal routes have an administrative distance of 90. External EIGRP routes have AD 170."
+                        },
+                        {
+                            q: "Which routing protocol uses Autonomous System Numbers (ASNs) for routing decisions?",
+                            options: ["RIP", "OSPF", "EIGRP", "BGP"],
+                            answer: 3,
+                            explanation: "BGP uses ASNs to make path decisions between different autonomous systems on the Internet."
+                        },
+                        {
+                            q: "What is the administrative distance of OSPF?",
+                            options: ["90", "110", "120", "170"],
+                            answer: 1,
+                            explanation: "OSPF has an administrative distance of 110, making it less preferred than EIGRP (90) but more than RIP (120)."
+                        },
+                        {
+                            q: "What is the purpose of the Split Horizon rule in distance vector protocols?",
+                            options: ["To increase routing update frequency", "To prevent routing loops by not advertising routes back out the interface they were learned on", "To reduce bandwidth usage", "To encrypt routing updates"],
+                            answer: 1,
+                            explanation: "Split Horizon prevents routing loops by not advertising a route back out the same interface it was received on."
+                        },
+                        {
+                            q: "What is route poisoning in RIP?",
+                            options: ["Adding extra security to routes", "Setting a failed route's metric to infinity (16) to quickly inform neighbors", "Slowing down routing updates", "Encrypting route information"],
+                            answer: 1,
+                            explanation: "Route poisoning sets a failed route's metric to 16 (infinity in RIP) to immediately notify neighbors of the failure."
+                        },
+                        {
+                            q: "What is the hold-down timer in RIP used for?",
+                            options: ["To speed up convergence", "To prevent accepting possibly invalid routes during network instability", "To encrypt routing updates", "To reduce CPU usage"],
+                            answer: 1,
+                            explanation: "The hold-down timer prevents routers from accepting new routes for a failed destination during a period of instability."
+                        }
+                    ]
+                },
+                {
+                    id: 3,
+                    title: "Module III: Access Control List",
+                    shortTitle: "Access Control Lists",
+                    icon: "fas fa-shield-alt",
+                    description: "Standard ACL, Extended ACL, Wildcard Masks, Implicit Deny, Named ACLs",
+                    topics: ["Standard ACL", "Extended ACL", "Wildcard Masks", "Implicit Deny", "Named ACLs"],
+                    questions: [
+                        {
+                            q: "What is the primary purpose of an Access Control List (ACL) in networking?",
+                            options: ["To encrypt data", "To manage IP address assignment", "To filter network traffic", "To perform network address translation"],
+                            answer: 2,
+                            explanation: "ACLs are used to filter network traffic based on defined rules, controlling what traffic is permitted or denied."
+                        },
+                        {
+                            q: "What are the two main types of ACLs in networking?",
+                            options: ["Standard and Extended", "Public and Private", "Static and Dynamic", "Local and Remote"],
+                            answer: 0,
+                            explanation: "The two main types are Standard ACLs (filter by source IP) and Extended ACLs (filter by source/dest IP, protocol, port)."
+                        },
+                        {
+                            q: "Standard ACLs filter traffic based on which criteria?",
+                            options: ["Source IP address only", "Source and destination IP address", "Source IP address and port number", "Destination IP address only"],
+                            answer: 0,
+                            explanation: "Standard ACLs filter based only on the source IP address. Extended ACLs can filter by multiple criteria."
+                        },
+                        {
+                            q: "Extended ACLs can filter traffic based on which criteria?",
+                            options: ["Source and destination IP address, protocol type, and port numbers", "Source IP address only", "MAC address only", "VLAN ID"],
+                            answer: 0,
+                            explanation: "Extended ACLs provide granular filtering by source/dest IP, protocol type, and port numbers."
+                        },
+                        {
+                            q: "In Cisco IOS, which number range is used for standard ACLs?",
+                            options: ["1-99", "100-199", "200-299", "300-399"],
+                            answer: 0,
+                            explanation: "Standard ACLs use number ranges 1-99 and 1300-1999."
+                        },
+                        {
+                            q: "In Cisco IOS, which number range is used for extended ACLs?",
+                            options: ["1-99", "100-199", "200-299", "300-399"],
+                            answer: 1,
+                            explanation: "Extended ACLs use number ranges 100-199 and 2000-2699."
+                        },
+                        {
+                            q: "Which command is used to apply an ACL to an interface in Cisco IOS?",
+                            options: ["ip access-group", "access-list apply", "ip access-list", "set access-list"],
+                            answer: 0,
+                            explanation: "The 'ip access-group' command applies an ACL to an interface in either inbound or outbound direction."
+                        },
+                        {
+                            q: "What does the wildcard mask 0.0.0.255 represent?",
+                            options: ["Match any IP address", "Match the first three octets exactly, any value in the last octet", "Match any value in the first three octets, exact match in the last octet", "Match all bits exactly"],
+                            answer: 1,
+                            explanation: "0.0.0.255 means the first three octets must match exactly, while the last octet can be any value (0-255)."
+                        },
+                        {
+                            q: "Which of the following is a correct statement about an implicit deny in ACLs?",
+                            options: ["It allows all traffic by default", "It denies all traffic that is not explicitly permitted", "It is a command that must be configured", "It only applies to extended ACLs"],
+                            answer: 1,
+                            explanation: "Every ACL has an implicit deny at the end that blocks all traffic not explicitly permitted by earlier rules."
+                        },
+                        {
+                            q: "What is the correct command to create a standard ACL in Cisco IOS?",
+                            options: ["access-list 10 permit 192.168.1.0 0.0.0.255", "access-group 10 permit 192.168.1.0 0.0.0.255", "ip access-list 10 permit 192.168.1.0 0.0.0.255", "permit ip access-list 10"],
+                            answer: 0,
+                            explanation: "The correct syntax is 'access-list [number] [permit/deny] [source] [wildcard-mask]'."
+                        },
+                        {
+                            q: "In an extended ACL, which protocol keyword is used to filter HTTP traffic?",
+                            options: ["icmp", "tcp", "udp", "http"],
+                            answer: 1,
+                            explanation: "HTTP uses TCP port 80, so you use the 'tcp' protocol keyword with port 80 in extended ACLs."
+                        },
+                        {
+                            q: "Which of the following ACLs will block all traffic from the IP address 192.168.1.100?",
+                            options: ["access-list 1 deny 192.168.1.100 0.0.0.0", "access-list 1 deny 192.168.1.100 255.255.255.255", "access-list 1 deny 192.168.1.100 0.0.0.255", "access-list 1 deny"],
+                            answer: 0,
+                            explanation: "0.0.0.0 wildcard mask means exact match for all octets, blocking only 192.168.1.100."
+                        },
+                        {
+                            q: "Where should a standard ACL be placed to effectively filter traffic?",
+                            options: ["As close to the destination as possible", "As close to the source as possible", "On the core router", "On the firewall"],
+                            answer: 0,
+                            explanation: "Standard ACLs should be placed close to the destination to avoid blocking unintended traffic."
+                        },
+                        {
+                            q: "Where should an extended ACL be placed to effectively filter traffic?",
+                            options: ["As close to the destination as possible", "As close to the source as possible", "On the core router", "On the firewall"],
+                            answer: 1,
+                            explanation: "Extended ACLs should be placed close to the source to filter traffic before it consumes network bandwidth."
+                        },
+                        {
+                            q: "Which command would you use to view all ACLs configured on a Cisco router?",
+                            options: ["show ip access-lists", "show access-lists", "show running-config access-lists", "show config access-lists"],
+                            answer: 1,
+                            explanation: "'show access-lists' displays all configured ACLs on the router."
+                        },
+                        {
+                            q: "What does the 'permit' keyword in an ACL do?",
+                            options: ["Blocks traffic", "Allows traffic", "Redirects traffic", "Logs traffic"],
+                            answer: 1,
+                            explanation: "The 'permit' keyword allows traffic that matches the specified criteria to pass through."
+                        },
+                        {
+                            q: "What does the 'deny' keyword in an ACL do?",
+                            options: ["Allows traffic", "Blocks traffic", "Redirects traffic", "Logs traffic"],
+                            answer: 1,
+                            explanation: "The 'deny' keyword blocks traffic that matches the specified criteria."
+                        },
+                        {
+                            q: "Which command applies an ACL to outbound traffic on an interface?",
+                            options: ["ip access-group 10 out", "access-list apply 10 out", "access-list 10 out", "ip access-list out 10"],
+                            answer: 0,
+                            explanation: "'ip access-group [number] out' applies an ACL to outbound traffic on an interface."
+                        },
+                        {
+                            q: "What is a named ACL in Cisco IOS?",
+                            options: ["An ACL that uses a name instead of a number for identification", "An ACL that can only be applied to specific interfaces", "An ACL with enhanced security features", "An ACL that can only filter traffic based on port numbers"],
+                            answer: 0,
+                            explanation: "Named ACLs use descriptive names instead of numbers and can be modified line-by-line."
+                        },
+                        {
+                            q: "Which command would you use to delete an ACL in Cisco IOS?",
+                            options: ["no access-list 10", "delete access-list 10", "remove access-list 10", "clear access-list 10"],
+                            answer: 0,
+                            explanation: "Use 'no access-list [number]' to delete a numbered ACL from the configuration."
+                        },
+                        {
+                            q: "What is the range for standard ACL numbers in Cisco IOS?",
+                            options: ["1-99 and 1300-1999", "100-199 and 2000-2699", "1-99 only", "100-199 only"],
+                            answer: 0,
+                            explanation: "Standard ACLs use 1-99 and 1300-1999. Extended ACLs use 100-199 and 2000-2699."
+                        }
+                    ]
+                },
+
+                {
+                    id: 4,
+                    title: "Module IV: Layer 2 Switching",
+                    shortTitle: "Layer 2 Switching",
+                    icon: "fas fa-exchange-alt",
+                    description: "VLAN, VTP, STP, Switching Methods, CAM Table, Inter-VLAN Routing",
+                    topics: ["VLAN", "VTP", "STP", "Switching Methods", "CAM Table", "Trunking"],
+                    questions: [
+                        {
+                            q: "Which IEEE standard defines VLANs?",
+                            options: ["802.1D", "802.1Q", "802.1X", "802.3"],
+                            answer: 1,
+                            explanation: "IEEE 802.1Q is the standard that defines VLAN tagging on Ethernet networks."
+                        },
+                        {
+                            q: "What is the primary benefit of VLANs?",
+                            options: ["Increased broadcast domain", "Reduced network performance", "Enhanced network security", "Simplified network management"],
+                            answer: 2,
+                            explanation: "VLANs enhance network security by logically segmenting the network and isolating broadcast domains."
+                        },
+                        {
+                            q: "Which type of VLAN is used for network management?",
+                            options: ["Data VLAN", "Default VLAN", "Native VLAN", "Management VLAN"],
+                            answer: 3,
+                            explanation: "Management VLAN is dedicated for switch management traffic (SSH, Telnet, SNMP)."
+                        },
+                        {
+                            q: "What is a common default VLAN ID for an untagged port on a switch?",
+                            options: ["VLAN 1", "VLAN 100", "VLAN 1000", "VLAN 4095"],
+                            answer: 0,
+                            explanation: "VLAN 1 is the default VLAN on Cisco switches and cannot be deleted."
+                        },
+                        {
+                            q: "Which command is used to assign a VLAN to a switch port on a Cisco switch?",
+                            options: ["switchport access vlan [vlan-id]", "vlan database [vlan-id]", "assign vlan [vlan-id]", "port access vlan [vlan-id]"],
+                            answer: 0,
+                            explanation: "'switchport access vlan [vlan-id]' assigns a VLAN to an access port."
+                        },
+                        {
+                            q: "What is the primary purpose of VTP?",
+                            options: ["To manage VLAN configuration across multiple switches", "To provide inter-VLAN routing", "To create VLANs", "To assign IP addresses to VLANs"],
+                            answer: 0,
+                            explanation: "VTP (VLAN Trunking Protocol) synchronizes VLAN information across switches in the same VTP domain."
+                        },
+                        {
+                            q: "Which VTP mode allows a switch to create, modify, and delete VLANs?",
+                            options: ["Client", "Server", "Transparent", "Host"],
+                            answer: 1,
+                            explanation: "VTP Server mode allows creating, modifying, and deleting VLANs, and advertising them to other switches."
+                        },
+                        {
+                            q: "Which VTP mode does not synchronize VLAN information but forwards VTP advertisements?",
+                            options: ["Server", "Client", "Transparent", "Monitoring"],
+                            answer: 2,
+                            explanation: "Transparent mode forwards VTP advertisements but does not participate in VLAN synchronization."
+                        },
+                        {
+                            q: "What is the default VTP mode on a Cisco switch?",
+                            options: ["Server", "Client", "Transparent", "Host"],
+                            answer: 0,
+                            explanation: "Cisco switches default to VTP Server mode."
+                        },
+                        {
+                            q: "Which command displays the VTP status of a switch?",
+                            options: ["show vtp status", "show vlan brief", "show running-config", "show switchport"],
+                            answer: 0,
+                            explanation: "'show vtp status' displays the VTP configuration, mode, domain name, and revision number."
+                        },
+                        {
+                            q: "What is the main purpose of STP?",
+                            options: ["To increase network speed", "To prevent switching loops", "To manage VLANs", "To route IP packets"],
+                            answer: 1,
+                            explanation: "STP (Spanning Tree Protocol) prevents loops in redundant switched networks by blocking redundant paths."
+                        },
+                        {
+                            q: "Which protocol is the faster-converging version of STP?",
+                            options: ["RSTP", "PVST", "MSTP", "BPDU"],
+                            answer: 0,
+                            explanation: "RSTP (Rapid Spanning Tree Protocol, 802.1w) converges much faster than traditional STP (802.1D)."
+                        },
+                        {
+                            q: "Which device becomes the root bridge in an STP topology?",
+                            options: ["The device with the highest MAC address", "The device with the lowest MAC address", "The device with the lowest bridge ID", "The device with the highest bridge ID"],
+                            answer: 2,
+                            explanation: "The root bridge is elected based on the lowest Bridge ID (priority + MAC address)."
+                        },
+                        {
+                            q: "What is the purpose of BPDU (Bridge Protocol Data Unit) frames?",
+                            options: ["To carry IP traffic", "To manage VLANs", "To exchange STP information", "To configure switch ports"],
+                            answer: 2,
+                            explanation: "BPDUs are used by switches to exchange STP information and elect the root bridge."
+                        },
+                        {
+                            q: "Which STP state does a port enter first after being enabled?",
+                            options: ["Blocking", "Listening", "Learning", "Forwarding"],
+                            answer: 0,
+                            explanation: "A newly enabled port first enters the Blocking state to prevent loops while STP calculations occur."
+                        },
+                        {
+                            q: "Which switching method checks the CRC (Cyclic Redundancy Check) before forwarding a frame?",
+                            options: ["Cut-through", "Store-and-forward", "Fragment-free", "Fast-forward"],
+                            answer: 1,
+                            explanation: "Store-and-forward switching receives the entire frame, checks CRC for errors, then forwards."
+                        },
+                        {
+                            q: "What is the function of a MAC address table in a switch?",
+                            options: ["To store IP addresses", "To route packets between VLANs", "To map MAC addresses to switch ports", "To perform DNS lookups"],
+                            answer: 2,
+                            explanation: "The MAC address table (CAM table) maps MAC addresses to physical switch ports for frame forwarding."
+                        },
+                        {
+                            q: "Which switch port mode is used to connect an end device to a VLAN?",
+                            options: ["Trunk mode", "Access mode", "Hybrid mode", "Dynamic mode"],
+                            answer: 1,
+                            explanation: "Access mode is used for end devices (PCs, printers) connecting to a single VLAN."
+                        },
+                        {
+                            q: "Which command is used to display the MAC address table on a Cisco switch?",
+                            options: ["show mac-address-table", "show ip interface brief", "show interfaces", "show vlan brief"],
+                            answer: 0,
+                            explanation: "'show mac-address-table' displays the CAM table with MAC-to-port mappings."
+                        },
+                        {
+                            q: "What is the purpose of a trunk port on a switch?",
+                            options: ["To connect multiple VLANs on different switches", "To connect a single device to a VLAN", "To provide power to end devices", "To perform routing between VLANs"],
+                            answer: 0,
+                            explanation: "Trunk ports carry traffic for multiple VLANs between switches using 802.1Q tagging."
+                        },
+                        {
+                            q: "Which IEEE standard defines Link Aggregation (LAG)?",
+                            options: ["802.1D", "802.1Q", "802.3ad", "802.1w"],
+                            answer: 2,
+                            explanation: "IEEE 802.3ad (now 802.1AX) defines Link Aggregation Control Protocol (LACP) for bundling multiple links."
+                        },
+                        {
+                            q: "Which feature allows for redundancy by having multiple switches acting as a single virtual switch?",
+                            options: ["STP", "VTP", "VLAN", "StackWise"],
+                            answer: 3,
+                            explanation: "Cisco StackWise technology allows multiple physical switches to operate as a single logical switch."
+                        },
+                        {
+                            q: "In which switching mode does the switch forward the packet as soon as the destination address is read?",
+                            options: ["Store-and-forward", "Cut-through", "Fragment-free", "Fast-forward"],
+                            answer: 1,
+                            explanation: "Cut-through switching begins forwarding after reading just the destination MAC address (first 6 bytes)."
+                        },
+                        {
+                            q: "What is the result of a broadcast storm in a switching network?",
+                            options: ["Increased network performance", "Network congestion and packet loss", "Efficient data delivery", "Improved security"],
+                            answer: 1,
+                            explanation: "Broadcast storms occur when loops cause broadcasts to multiply indefinitely, leading to congestion and packet loss."
+                        },
+                        {
+                            q: "Which command on a Cisco switch enables an interface to automatically negotiate a trunk link?",
+                            options: ["switchport mode trunk", "switchport trunk encapsulation dot1q", "switchport mode dynamic desirable", "switchport access vlan"],
+                            answer: 2,
+                            explanation: "'switchport mode dynamic desirable' actively negotiates trunk formation with the connected device."
+                        }
+                    ]
+                },
+                {
+                    id: 5,
+                    title: "Module V: Wide Area Networking & Authentication Protocols",
+                    shortTitle: "WAN & Auth Protocols",
+                    icon: "fas fa-globe",
+                    description: "Leased Lines, Frame Relay, PPP, HDLC, VPN, PAP, CHAP, BGP",
+                    topics: ["Leased Lines", "Frame Relay", "PPP", "HDLC", "VPN", "PAP/CHAP", "BGP"],
+                    questions: [
+                        {
+                            q: "What is a leased line?",
+                            options: ["A shared network connection", "A dedicated, private telecommunications circuit", "A type of packet-switched network", "An internet-based virtual network"],
+                            answer: 1,
+                            explanation: "A leased line is a dedicated, private circuit providing fixed-bandwidth connectivity between two locations."
+                        },
+                        {
+                            q: "Which of the following is a characteristic of circuit switching?",
+                            options: ["Data is broken into packets", "A dedicated path is established for the duration of the communication", "Data is transmitted in fixed-size cells", "Multiple virtual circuits share the same physical link"],
+                            answer: 1,
+                            explanation: "Circuit switching establishes a dedicated path for the entire communication session, like traditional telephone calls."
+                        },
+                        {
+                            q: "In packet switching, how is data transmitted?",
+                            options: ["In fixed-size cells", "Over a dedicated circuit", "As a continuous stream", "In small packets that are routed independently"],
+                            answer: 3,
+                            explanation: "Packet switching breaks data into small packets that are routed independently across a shared network."
+                        },
+                        {
+                            q: "Frame Relay operates at which layer of the OSI model?",
+                            options: ["Network layer", "Data link layer", "Transport layer", "Physical layer"],
+                            answer: 1,
+                            explanation: "Frame Relay operates at the Data Link Layer (Layer 2) as a packet-switching WAN technology."
+                        },
+                        {
+                            q: "What does ISDN stand for?",
+                            options: ["Internet Service Digital Network", "Integrated Services Digital Network", "Internal Services Data Network", "Interconnected Services Data Network"],
+                            answer: 1,
+                            explanation: "ISDN stands for Integrated Services Digital Network, a circuit-switched telephone network system."
+                        },
+                        {
+                            q: "HDLC is a protocol used at which layer of the OSI model?",
+                            options: ["Network layer", "Transport layer", "Data link layer", "Application layer"],
+                            answer: 2,
+                            explanation: "HDLC (High-Level Data Link Control) is a bit-oriented Data Link Layer protocol for reliable data transmission."
+                        },
+                        {
+                            q: "Which protocol provides a simple method for point-to-point communication and supports authentication, encryption, and compression?",
+                            options: ["HDLC", "Frame Relay", "PPP", "ATM"],
+                            answer: 2,
+                            explanation: "PPP (Point-to-Point Protocol) supports authentication (PAP/CHAP), encryption, and compression."
+                        },
+                        {
+                            q: "ATM transfers data in:",
+                            options: ["Packets", "Frames", "Segments", "Fixed-size cells"],
+                            answer: 3,
+                            explanation: "ATM (Asynchronous Transfer Mode) uses fixed-size 53-byte cells (5-byte header + 48-byte payload)."
+                        },
+                        {
+                            q: "Which of the following protocols sends passwords in plain text?",
+                            options: ["PAP", "CHAP", "EAP", "RADIUS"],
+                            answer: 0,
+                            explanation: "PAP (Password Authentication Protocol) sends passwords in plain text, making it insecure."
+                        },
+                        {
+                            q: "CHAP improves security over PAP by using:",
+                            options: ["Plain text transmission", "Two-way handshake", "Three-way handshake and periodic re-authentication", "Single-way authentication"],
+                            answer: 2,
+                            explanation: "CHAP uses a three-way handshake with challenge-response and periodic re-authentication for better security."
+                        },
+                        {
+                            q: "Single-homed EBGP refers to:",
+                            options: ["A BGP setup with multiple ISPs", "A BGP setup with a single ISP", "A BGP setup within an Autonomous System", "A multi-homed internal BGP setup"],
+                            answer: 1,
+                            explanation: "Single-homed EBGP means having one connection to a single ISP, typically using a static default route."
+                        },
+                        {
+                            q: "Which type of VPN uses the public internet to create a secure and encrypted connection between two points?",
+                            options: ["MPLS VPN", "Remote Access VPN", "Frame Relay VPN", "ISDN VPN"],
+                            answer: 1,
+                            explanation: "Remote Access VPN creates secure encrypted connections over the public internet for remote users."
+                        },
+                        {
+                            q: "Which VPN protocol is known for its robust security and ability to encapsulate PPP traffic?",
+                            options: ["L2TP", "PPTP", "SSL", "IPSec"],
+                            answer: 3,
+                            explanation: "IPSec provides robust security and is commonly used with L2TP to encapsulate PPP traffic securely."
+                        },
+                        {
+                            q: "What is the primary advantage of using a leased line for WAN connectivity?",
+                            options: ["Low cost", "High flexibility", "Dedicated and consistent bandwidth", "Easy to set up"],
+                            answer: 2,
+                            explanation: "Leased lines provide dedicated, consistent bandwidth with guaranteed performance and reliability."
+                        },
+                        {
+                            q: "Frame Relay is most similar to which other WAN technology in terms of function?",
+                            options: ["ISDN", "ATM", "HDLC", "Ethernet"],
+                            answer: 1,
+                            explanation: "Frame Relay is similar to ATM as both are packet-switched WAN technologies, though ATM uses fixed-size cells."
+                        }
+                    ]
+                }
+            ]
+        };
+
+
+        // ========== STATE MANAGEMENT ==========
+        let currentState = {
+            page: 'home',
+            theme: 'dark',
+            mode: 'study',
+            currentModule: null,
+            quiz: {
+                questions: [],
+                currentIndex: 0,
+                answers: [],
+                score: 0,
+                moduleFilter: 'all'
+            }
+        };
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            renderStudyGrid();
+            updateQuizBadge();
+        });
+
+        // ========== PARTICLES ==========
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // ========== THEME TOGGLE ==========
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            const current = body.getAttribute('data-theme');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+
+            body.setAttribute('data-theme', newTheme);
+            currentState.theme = newTheme;
+
+            if (newTheme === 'light') {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        // ========== SIDEBAR TOGGLE ==========
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+
+        // ========== PAGE NAVIGATION ==========
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Show target page
+            document.getElementById('page-' + pageName).classList.add('active');
+
+            currentState.page = pageName;
+
+            // Update sidebar nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === pageName) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Update mode indicator
+            const modeIndicator = document.getElementById('modeIndicator');
+            if (pageName === 'quiz' || pageName === 'results') {
+                modeIndicator.innerHTML = '<i class="fas fa-question-circle"></i><span>Quiz Mode</span>';
+            } else {
+                modeIndicator.innerHTML = '<i class="fas fa-book-open"></i><span>Study Mode</span>';
+            }
+
+            // Close mobile sidebar
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('show');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // ========== SHOW MODULE DETAIL ==========
+        function showModule(moduleId) {
+            const module = quizData.modules.find(m => m.id === moduleId);
+            if (!module) return;
+
+            currentState.currentModule = moduleId;
+
+            document.getElementById('moduleTitle').innerHTML = `<i class="${module.icon}"></i> ${module.shortTitle}`;
+            document.getElementById('moduleDetailTitle').textContent = module.title;
+            document.getElementById('moduleDetailDesc').textContent = module.description;
+
+            // Render MCQ list
+            const mcqList = document.getElementById('mcqList');
+            mcqList.innerHTML = '';
+
+            module.questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = 'mcq-item';
+                item.innerHTML = `
+                    <div class="mcq-question" onclick="toggleMCQ(this)">
+                        <div class="mcq-num">${idx + 1}</div>
+                        <div class="mcq-text">${q.q}</div>
+                        <div class="mcq-toggle"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+                    <div class="mcq-answer-panel">
+                        <div class="mcq-options">
+                            ${q.options.map((opt, i) => `
+                                <div class="mcq-option ${i === q.answer ? 'correct' : ''}">
+                                    <div class="mcq-option-letter">${String.fromCharCode(65 + i)}</div>
+                                    <span>${opt}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="mcq-answer-key">
+                            <i class="fas fa-check-circle"></i>
+                            Answer: ${String.fromCharCode(65 + q.answer)} - ${q.options[q.answer]}
+                        </div>
+                        <div style="margin-top:12px; color: var(--text-secondary); font-size:0.9rem; line-height:1.6;">
+                            <strong style="color:var(--accent-light)">Explanation:</strong> ${q.explanation}
+                        </div>
+                    </div>
+                `;
+                mcqList.appendChild(item);
+            });
+
+            showPage('module');
+        }
+
+        function toggleMCQ(element) {
+            const item = element.closest('.mcq-item');
+            item.classList.toggle('expanded');
+        }
+
+        // ========== STUDY GRID ==========
+        function renderStudyGrid() {
+            const grid = document.getElementById('studyGrid');
+            grid.innerHTML = '';
+
+            quizData.modules.forEach(module => {
+                const card = document.createElement('div');
+                card.className = 'study-card';
+                card.onclick = () => showModule(module.id);
+                card.innerHTML = `
+                    <div class="study-card-header">
+                        <div class="study-card-title">
+                            <i class="${module.icon}"></i>
+                            ${module.shortTitle}
+                        </div>
+                        <div class="study-card-count">${module.questions.length} MCQs</div>
+                    </div>
+                    <div class="study-card-desc">${module.description}</div>
+                    <div class="study-card-topics">
+                        ${module.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ========== QUIZ ENGINE ==========
+        function startQuiz(moduleFilter = 'all') {
+            currentState.quiz.moduleFilter = moduleFilter;
+
+            let questions = [];
+            if (moduleFilter === 'all') {
+                quizData.modules.forEach(m => {
+                    questions.push(...m.questions.map(q => ({...q, moduleId: m.id, moduleName: m.shortTitle})));
+                });
+            } else {
+                const module = quizData.modules.find(m => m.id === moduleFilter);
+                if (module) {
+                    questions = module.questions.map(q => ({...q, moduleId: module.id, moduleName: module.shortTitle}));
+                }
+            }
+
+            // Shuffle questions
+            questions = shuffleArray(questions);
+
+            currentState.quiz.questions = questions;
+            currentState.quiz.currentIndex = 0;
+            currentState.quiz.answers = new Array(questions.length).fill(null);
+            currentState.quiz.score = 0;
+
+            renderQuiz();
+            showPage('quiz');
+        }
+
+        function startModuleQuiz() {
+            if (currentState.currentModule) {
+                startQuiz(currentState.currentModule);
+            }
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            const quiz = currentState.quiz;
+            const currentQ = quiz.questions[quiz.currentIndex];
+            const total = quiz.questions.length;
+            const answered = quiz.answers.filter(a => a !== null).length;
+            const progress = (answered / total) * 100;
+
+            // Update badge
+            document.getElementById('quizBadge').textContent = `${answered}/${total}`;
+
+            const circumference = 2 * Math.PI * 24;
+            const offset = circumference - (progress / 100) * circumference;
+
+            container.innerHTML = `
+                <div class="quiz-progress">
+                    <div class="progress-info">
+                        <div class="progress-ring">
+                            <svg width="56" height="56">
+                                <circle class="progress-ring-bg" cx="28" cy="28" r="24"></circle>
+                                <circle class="progress-ring-fill" cx="28" cy="28" r="24" 
+                                    stroke-dasharray="${circumference}" 
+                                    stroke-dashoffset="${offset}"></circle>
+                            </svg>
+                            <div class="progress-text">${Math.round(progress)}%</div>
+                        </div>
+                        <div class="progress-details">
+                            <h4>Question ${quiz.currentIndex + 1} of ${total}</h4>
+                            <p>${currentQ.moduleName || 'Mixed Modules'}</p>
+                        </div>
+                    </div>
+                    <div class="progress-score">
+                        <div class="score-value">${quiz.score}</div>
+                        <div class="score-label">Score</div>
+                    </div>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-number">${quiz.currentIndex + 1}</div>
+                        <div class="question-text">${currentQ.q}</div>
+                    </div>
+                    <div class="options-list" id="optionsList">
+                        ${currentQ.options.map((opt, i) => `
+                            <div class="option ${quiz.answers[quiz.currentIndex] === i ? 'selected' : ''} ${getOptionClass(quiz.currentIndex, i)}" 
+                                 onclick="selectOption(${i})" data-index="${i}">
+                                <div class="option-letter">${String.fromCharCode(65 + i)}</div>
+                                <div class="option-text">${opt}</div>
+                                <div class="option-check">
+                                    ${getOptionIcon(quiz.currentIndex, i)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="explanation ${quiz.answers[quiz.currentIndex] !== null ? 'show' : ''}" id="explanation">
+                        <div class="explanation-header ${quiz.answers[quiz.currentIndex] === currentQ.answer ? 'correct' : 'incorrect'}">
+                            <i class="fas ${quiz.answers[quiz.currentIndex] === currentQ.answer ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                            ${quiz.answers[quiz.currentIndex] === currentQ.answer ? 'Correct!' : 'Incorrect'}
+                        </div>
+                        <div class="explanation-text">${currentQ.explanation}</div>
+                        <div class="answer-key">
+                            <i class="fas fa-key"></i>
+                            Correct Answer: ${String.fromCharCode(65 + currentQ.answer)} - ${currentQ.options[currentQ.answer]}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-controls">
+                    <button class="btn-outline" onclick="prevQuestion()" ${quiz.currentIndex === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    ${quiz.currentIndex === total - 1 ? 
+                        `<button class="btn-primary" onclick="finishQuiz()">
+                            <i class="fas fa-flag-checkered"></i> Finish Quiz
+                        </button>` :
+                        `<button class="btn-primary" onclick="nextQuestion()">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>`
+                    }
+                </div>
+            `;
+        }
+
+        function getOptionClass(qIndex, optIndex) {
+            const answer = currentState.quiz.answers[qIndex];
+            if (answer === null) return '';
+            const correct = currentState.quiz.questions[qIndex].answer;
+            if (optIndex === correct) return 'correct';
+            if (optIndex === answer && answer !== correct) return 'incorrect';
+            return '';
+        }
+
+        function getOptionIcon(qIndex, optIndex) {
+            const answer = currentState.quiz.answers[qIndex];
+            if (answer === null) return '';
+            const correct = currentState.quiz.questions[qIndex].answer;
+            if (optIndex === correct) return '<i class="fas fa-check"></i>';
+            if (optIndex === answer && answer !== correct) return '<i class="fas fa-times"></i>';
+            return '';
+        }
+
+        function selectOption(index) {
+            const quiz = currentState.quiz;
+            if (quiz.answers[quiz.currentIndex] !== null) return; // Already answered
+
+            quiz.answers[quiz.currentIndex] = index;
+
+            if (index === quiz.questions[quiz.currentIndex].answer) {
+                quiz.score++;
+            }
+
+            renderQuiz();
+        }
+
+        function nextQuestion() {
+            if (currentState.quiz.currentIndex < currentState.quiz.questions.length - 1) {
+                currentState.quiz.currentIndex++;
+                renderQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentState.quiz.currentIndex > 0) {
+                currentState.quiz.currentIndex--;
+                renderQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            const quiz = currentState.quiz;
+            const total = quiz.questions.length;
+            const correct = quiz.score;
+            const incorrect = total - correct;
+            const percentage = Math.round((correct / total) * 100);
+
+            let message = '';
+            let icon = '';
+            let iconColor = '';
+
+            if (percentage >= 80) {
+                message = 'Excellent work! You have a strong grasp of Switching & Routing concepts.';
+                icon = 'fa-trophy';
+                iconColor = '#fbbf24';
+            } else if (percentage >= 60) {
+                message = 'Good job! Review the questions you missed to improve further.';
+                icon = 'fa-star';
+                iconColor = '#6366f1';
+            } else if (percentage >= 40) {
+                message = 'Keep practicing! Focus on understanding the core concepts better.';
+                icon = 'fa-book';
+                iconColor = '#f59e0b';
+            } else {
+                message = 'More study needed. Review the Study Mode to strengthen your fundamentals.';
+                icon = 'fa-exclamation-circle';
+                iconColor = '#ef4444';
+            }
+
+            document.getElementById('resultsScreen').innerHTML = `
+                <div class="results-icon" style="color: ${iconColor}; box-shadow: 0 0 40px ${iconColor}40;">
+                    <i class="fas ${icon}"></i>
+                </div>
+                <h2>Quiz Complete!</h2>
+                <p class="subtitle">${currentState.quiz.moduleFilter === 'all' ? 'Mixed Modules' : quizData.modules.find(m => m.id === currentState.quiz.moduleFilter)?.shortTitle || 'Module Quiz'}</p>
+
+                <div class="results-stats">
+                    <div class="result-stat correct">
+                        <div class="result-stat-value">${correct}</div>
+                        <div class="result-stat-label">Correct</div>
+                    </div>
+                    <div class="result-stat incorrect">
+                        <div class="result-stat-value">${incorrect}</div>
+                        <div class="result-stat-label">Incorrect</div>
+                    </div>
+                    <div class="result-stat total">
+                        <div class="result-stat-value">${percentage}%</div>
+                        <div class="result-stat-label">Score</div>
+                    </div>
+                </div>
+
+                <div class="results-message">${message}</div>
+
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-primary" onclick="startQuiz('${currentState.quiz.moduleFilter}')">
+                        <i class="fas fa-redo"></i> Retry Quiz
+                    </button>
+                    <button class="btn-outline" onclick="showPage('study')">
+                        <i class="fas fa-book-open"></i> Study Mode
+                    </button>
+                    <button class="btn-outline" onclick="showPage('home')">
+                        <i class="fas fa-home"></i> Home
+                    </button>
+                </div>
+            `;
+
+            showPage('results');
+        }
+
+        function updateQuizBadge() {
+            const totalQuestions = quizData.modules.reduce((sum, m) => sum + m.questions.length, 0);
+            document.getElementById('quizBadge').textContent = `0/${totalQuestions}`;
+        }
+    </script>
+</body>
+</html>
